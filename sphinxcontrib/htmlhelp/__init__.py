@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 __ = get_translation(__name__, 'console')
 
 package_dir = path.abspath(path.dirname(__file__))
-template_dir = path.join(package_dir, 'templates', 'htmlhelp')
+template_dir = path.join(package_dir, 'templates')
 
 
 # The following list includes only languages supported by Sphinx. See
@@ -198,6 +198,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
 
     def render(self, name: str, context: Dict) -> str:
         template = SphinxRenderer(template_dir)
+        print(template_dir)
         return template.render(name, context)
 
     @progress_message(__('copying stopword list'))
