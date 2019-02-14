@@ -12,13 +12,15 @@ import html
 import os
 import warnings
 from os import path
-from typing import Any, Dict
+from typing import Any, Dict, IO, List, Tuple
 
 from docutils import nodes
+from docutils.nodes import Element, Node, document
 
 from sphinx import addnodes
 from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
+from sphinx.config import Config
 from sphinx.deprecation import RemovedInSphinx40Warning
 from sphinx.environment.adapters.indexentries import IndexEntries
 from sphinx.locale import get_translation
@@ -30,11 +32,6 @@ from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
 
 from sphinxcontrib.htmlhelp.version import __version__
-
-if False:
-    # For type annotation
-    from typing import IO, List, Match, Tuple  # NOQA
-    from sphinx.config import Config  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -81,8 +78,7 @@ chm_locales = {
 }
 
 
-def chm_htmlescape(s, quote=True):
-    # type: (str, bool) -> str
+def chm_htmlescape(s: str, quote: bool = True) -> str:
     """
     chm_htmlescape() is a wrapper of html.escape().
     .hhc/.hhk files don't recognize hex escaping, we need convert
@@ -96,54 +92,44 @@ def chm_htmlescape(s, quote=True):
 
 
 class ToCTreeVisitor(nodes.NodeVisitor):
-    def __init__(self, document):
-        # type: (nodes.document) -> None
+    def __init__(self, document: document) -> None:
         super().__init__(document)
         self.body = []  # type: List[str]
         self.depth = 0
 
-    def append(self, text):
-        # type: (str) -> None
+    def append(self, text: str) -> None:
         indent = '  ' * (self.depth - 1)
         self.body.append(indent + text)
 
-    def astext(self):
-        # type: () -> str
+    def astext(self) -> str:
         return '\n'.join(self.body)
 
-    def unknown_visit(self, node):
-        # type: (nodes.Node) -> None
+    def unknown_visit(self, node: Node) -> None:
         pass
 
-    def unknown_departure(self, node):
-        # type: (nodes.Node) -> None
+    def unknown_departure(self, node: Node) -> None:
         pass
 
-    def visit_bullet_list(self, node):
-        # type: (nodes.Element) -> None
+    def visit_bullet_list(self, node: Element) -> None:
         if self.depth > 0:
             self.append('<UL>')
 
         self.depth += 1
 
-    def depart_bullet_list(self, node):
-        # type: (nodes.Element) -> None
+    def depart_bullet_list(self, node: Element) -> None:
         self.depth -= 1
         if self.depth > 0:
             self.append('</UL>')
 
-    def visit_list_item(self, node):
-        # type: (nodes.Element) -> None
+    def visit_list_item(self, node: Element) -> None:
         self.append('<LI>')
         self.depth += 1
 
-    def depart_list_item(self, node):
-        # type: (nodes.Element) -> None
+    def depart_list_item(self, node: Element) -> None:
         self.depth -= 1
         self.append('</LI>')
 
-    def visit_reference(self, node):
-        # type: (nodes.Element) -> None
+    def visit_reference(self, node: Element) -> None:
         title = chm_htmlescape(node.astext(), True)
         self.append('<OBJECT type="text/sitemap">')
         self.append('  <PARAM name="Name" value="%s" />' % title)
@@ -176,8 +162,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
     lcid = 0x409
     encoding = 'cp1252'
 
-    def init(self):
-        # type: () -> None
+    def init(self) -> None:
         # the output files for HTML help is .html by default
         self.out_suffix = '.html'
         self.link_suffix = '.html'
@@ -187,27 +172,23 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         if locale is not None:
             self.lcid, self.encoding = locale
 
-    def open_file(self, outdir, basename, mode='w'):
-        # type: (str, str, str) -> IO
+    def open_file(self, outdir: str, basename: str, mode: str = 'w') -> IO:
         # open a file with the correct encoding for the selected language
         warnings.warn('HTMLHelpBuilder.open_file() is deprecated.',
                       RemovedInSphinx40Warning)
         return open(path.join(outdir, basename), mode, encoding=self.encoding,
                     errors='xmlcharrefreplace')
 
-    def update_page_context(self, pagename, templatename, ctx, event_arg):
-        # type: (str, str, Dict, str) -> None
+    def update_page_context(self, pagename: str, templatename: str, ctx: Dict, event_arg: str) -> None:  # NOQA
         ctx['encoding'] = self.encoding
 
-    def handle_finish(self):
-        # type: () -> None
+    def handle_finish(self) -> None:
         self.copy_stopword_list()
         self.build_project_file()
         self.build_toc_file()
         self.build_hhx(self.outdir, self.config.htmlhelp_basename)
 
-    def write_doc(self, docname, doctree):
-        # type: (str, nodes.document) -> None
+    def write_doc(self, docname: str, doctree: document) -> None:
         for node in doctree.traverse(nodes.reference):
             # add ``target=_blank`` attributes to external links
             if node.get('internal') is None and 'refuri' in node:
@@ -215,14 +196,12 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
 
         super().write_doc(docname, doctree)
 
-    def render(self, name, context):
-        # type: (str, Dict) -> str
+    def render(self, name: str, context: Dict) -> str:
         template = SphinxRenderer(template_dir)
         return template.render(name, context)
 
     @progress_message(__('copying stopword list'))
-    def copy_stopword_list(self):
-        # type: () -> None
+    def copy_stopword_list(self) -> None:
         """Copy a stopword list (.stp) to outdir.
 
         The stopword list contains a list of words the full text search facility
@@ -237,8 +216,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         copy_asset_file(template, filename)
 
     @progress_message(__('writing project file'))
-    def build_project_file(self):
-        # type: () -> None
+    def build_project_file(self) -> None:
         """Create a project file (.hhp) on outdir."""
         # scan project files
         project_files = []  # type: List[str]
@@ -266,8 +244,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
             f.write(body)
 
     @progress_message(__('writing TOC file'))
-    def build_toc_file(self):
-        # type: () -> None
+    def build_toc_file(self) -> None:
         """Create a ToC file (.hhp) on outdir."""
         filename = path.join(self.outdir, self.config.htmlhelp_basename + '.hhc')
         with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
@@ -287,18 +264,15 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
             }
             f.write(self.render('project.hhc', context))
 
-    def build_hhx(self, outdir, outname):
-        # type: (str, str) -> None
+    def build_hhx(self, outdir: str, outname: str) -> None:
         logger.info(__('writing index file...'))
         index = IndexEntries(self.env).create_index(self)
         filename = path.join(outdir, outname + '.hhk')
         with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
             f.write('<UL>\n')
 
-            def write_index(title, refs, subitems):
-                # type: (str, List[Tuple[str, str]], List[Tuple[str, List[Tuple[str, str]]]]) -> None  # NOQA
-                def write_param(name, value):
-                    # type: (str, str) -> None
+            def write_index(title: str, refs: List[Tuple[str, str]], subitems: List[Tuple[str, List[Tuple[str, str]]]]) -> None:  # NOQA
+                def write_param(name: str, value: str) -> None:
                     item = '    <param name="%s" value="%s">\n' % (name, value)
                     f.write(item)
                 title = chm_htmlescape(title, True)
@@ -325,8 +299,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
             f.write('</UL>\n')
 
 
-def default_htmlhelp_basename(config):
-    # type: (Config) -> str
+def default_htmlhelp_basename(config: Config) -> str:
     """Better default htmlhelp_basename setting."""
     return make_filename_from_project(config.project) + 'doc'
 
