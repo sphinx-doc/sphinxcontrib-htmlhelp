@@ -4,4 +4,6 @@ include CHANGES
 
 include tox.ini
 
+recursive-include sphinxcontrib/htmlhelp/templates *
+recursive-include sphinxcontrib/htmlhelp/locales *
 recursive-include tests *
