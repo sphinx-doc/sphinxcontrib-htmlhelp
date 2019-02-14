@@ -198,7 +198,6 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
 
     def render(self, name: str, context: Dict) -> str:
         template = SphinxRenderer(template_dir)
-        print(template_dir)
         return template.render(name, context)
 
     @progress_message(__('copying stopword list'))
