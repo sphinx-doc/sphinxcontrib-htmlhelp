@@ -2,7 +2,7 @@
 sphinxcontrib-htmlhelp
 ======================
 
-sphinxcontrib-htmlhelp is a sphinx extension which ...
+sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files.
 
 For more details, please visit http://www.sphinx-doc.org/.
 
