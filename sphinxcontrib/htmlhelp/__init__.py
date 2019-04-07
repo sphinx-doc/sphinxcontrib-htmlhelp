@@ -98,8 +98,7 @@ class ToCTreeVisitor(nodes.NodeVisitor):
         self.depth = 0
 
     def append(self, text: str) -> None:
-        indent = '  ' * (self.depth - 1)
-        self.body.append(indent + text)
+        self.body.append(text)
 
     def astext(self) -> str:
         return '\n'.join(self.body)
@@ -122,18 +121,16 @@ class ToCTreeVisitor(nodes.NodeVisitor):
             self.append('</UL>')
 
     def visit_list_item(self, node: Element) -> None:
-        self.append('<LI>')
+        self.append('<LI> <OBJECT type="text/sitemap">')
         self.depth += 1
 
     def depart_list_item(self, node: Element) -> None:
         self.depth -= 1
-        self.append('</LI>')
 
     def visit_reference(self, node: Element) -> None:
         title = chm_htmlescape(node.astext(), True)
-        self.append('<OBJECT type="text/sitemap">')
-        self.append('  <PARAM name="Name" value="%s" />' % title)
-        self.append('  <PARAM name="Local" value="%s" />' % node['refuri'])
+        self.append('    <param name="Name" value="%s">' % title)
+        self.append('    <param name="Local" value="%s">' % node['refuri'])
         self.append('</OBJECT>')
         raise nodes.SkipNode
 
