@@ -306,7 +306,7 @@ def setup(app: Sphinx) -> Dict[str, Any]:
     app.add_builder(HTMLHelpBuilder)
     app.add_message_catalog(__name__, path.join(package_dir, 'locales'))
 
-    app.add_config_value('htmlhelp_basename', default_htmlhelp_basename, None)
+    app.add_config_value('htmlhelp_basename', default_htmlhelp_basename, '')
     app.add_config_value('htmlhelp_file_suffix', None, 'html', [str])
     app.add_config_value('htmlhelp_link_suffix', None, 'html', [str])
 
