@@ -9,10 +9,13 @@ sphinxcontrib-htmlhelp is a sphinx extension which ...
 extras_require = {
     'test': [
         'pytest',
-        'flake8',
-        'mypy',
         'html5lib',
     ],
+    'lint': [
+        'flake8',
+        'mypy',
+        'docutils-stubs',
+    ]
 }
 
 
