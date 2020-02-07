@@ -12,7 +12,7 @@ import html
 import os
 import warnings
 from os import path
-from typing import Any, Dict, IO, List, Tuple
+from typing import Any, Dict, IO, List, Tuple, Type
 
 from docutils import nodes
 from docutils.nodes import Element, Node, document
@@ -30,6 +30,7 @@ from sphinx.util.fileutil import copy_asset_file
 from sphinx.util.nodes import NodeMatcher
 from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
+from sphinx.writers.html import HTMLTranslator
 
 from sphinxcontrib.htmlhelp.version import __version__
 
@@ -168,6 +169,11 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         locale = chm_locales.get(self.config.language)
         if locale is not None:
             self.lcid, self.encoding = locale
+
+    @property
+    def default_translator_class(self) -> "Type[nodes.NodeVisitor]":  # type: ignore
+        # Use HTML4 writer always
+        return HTMLTranslator
 
     def open_file(self, outdir: str, basename: str, mode: str = 'w') -> IO:
         # open a file with the correct encoding for the selected language
