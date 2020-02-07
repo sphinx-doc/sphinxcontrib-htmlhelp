@@ -68,7 +68,7 @@ chm_locales = {
     'no_NB': (0x414, 'cp1252'),
     'pl':    (0x415, 'cp1250'),
     'pt_BR': (0x416, 'cp1252'),
-    'ru':    (0x419, 'cp1251'),
+    'ru':    (0x419, 'windows-1251'),  # emit as <meta chaset='...'>
     'sk':    (0x41b, 'cp1250'),
     'sl':    (0x424, 'cp1250'),
     'sv':    (0x41d, 'cp1252'),
