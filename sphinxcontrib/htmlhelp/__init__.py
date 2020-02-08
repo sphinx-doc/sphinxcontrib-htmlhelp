@@ -12,7 +12,7 @@ import html
 import os
 import warnings
 from os import path
-from typing import Any, Dict, IO, List, Tuple, Type
+from typing import Any, Dict, IO, List, Set, Tuple, Type
 
 from docutils import nodes
 from docutils.nodes import Element, Node, document
@@ -174,6 +174,10 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
     def default_translator_class(self) -> "Type[nodes.NodeVisitor]":  # type: ignore
         # Use HTML4 writer always
         return HTMLTranslator
+
+    def prepare_writing(self, docnames: Set[str]) -> None:
+        super().prepare_writing(docnames)
+        self.globalcontext['html5_doctype'] = False
 
     def open_file(self, outdir: str, basename: str, mode: str = 'w') -> IO:
         # open a file with the correct encoding for the selected language
