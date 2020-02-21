@@ -3,7 +3,7 @@ import os
 from setuptools import setup, find_packages
 
 long_desc = '''
-sphinxcontrib-htmlhelp is a sphinx extension which ...
+sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files.
 '''
 
 extras_require = {
@@ -39,8 +39,9 @@ setup(
     license='BSD',
     author='Georg Brandl',
     author_email='georg@python.org',
-    description=long_desc,
+    description="sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files",
     long_description=long_desc,
+    long_description_content_type='text/x-rst',
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
