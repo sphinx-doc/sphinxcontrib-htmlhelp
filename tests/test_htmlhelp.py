@@ -13,7 +13,7 @@ import re
 import pytest
 from html5lib import HTMLParser
 
-from sphinx.builders.htmlhelp import chm_htmlescape, default_htmlhelp_basename
+from sphinxcontrib.htmlhelp import chm_htmlescape, default_htmlhelp_basename
 from sphinx.config import Config
 
 
