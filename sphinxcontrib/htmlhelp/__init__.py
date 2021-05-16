@@ -10,9 +10,8 @@
 
 import html
 import os
-import warnings
 from os import path
-from typing import Any, Dict, IO, List, Set, Tuple, Type
+from typing import Any, Dict, List, Set, Tuple, Type
 
 from docutils import nodes
 from docutils.nodes import Element, Node, document
@@ -21,7 +20,6 @@ from sphinx import addnodes
 from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.config import Config
-from sphinx.deprecation import RemovedInSphinx40Warning
 from sphinx.environment.adapters.indexentries import IndexEntries
 from sphinx.locale import get_translation
 from sphinx.util import logging
@@ -178,13 +176,6 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
     def prepare_writing(self, docnames: Set[str]) -> None:
         super().prepare_writing(docnames)
         self.globalcontext['html5_doctype'] = False
-
-    def open_file(self, outdir: str, basename: str, mode: str = 'w') -> IO:
-        # open a file with the correct encoding for the selected language
-        warnings.warn('HTMLHelpBuilder.open_file() is deprecated.',
-                      RemovedInSphinx40Warning)
-        return open(path.join(outdir, basename), mode, encoding=self.encoding,
-                    errors='xmlcharrefreplace')
 
     def update_page_context(self, pagename: str, templatename: str, ctx: Dict, event_arg: str) -> None:  # NOQA
         ctx['encoding'] = self.encoding
