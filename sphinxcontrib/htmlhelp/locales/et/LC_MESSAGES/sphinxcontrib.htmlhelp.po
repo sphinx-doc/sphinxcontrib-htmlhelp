@@ -27,6 +27,7 @@ msgstr ""
 #, python-format
 msgid "You can now run HTML Help Workshop with the .htp file in %(outdir)s."
 msgstr ""
+"Võid nüüd käivitada HTML Help Workshopi .htp failiga kataloogis %(outdir)s."
 
 #: sphinxcontrib/htmlhelp/__init__.py:203
 msgid "copying stopword list"
@@ -34,11 +35,11 @@ msgstr ""
 
 #: sphinxcontrib/htmlhelp/__init__.py:218
 msgid "writing project file"
-msgstr ""
+msgstr "projektifaili kirjutamine"
 
 #: sphinxcontrib/htmlhelp/__init__.py:246
 msgid "writing TOC file"
-msgstr ""
+msgstr "sisukorrafaili kirjutamine"
 
 #: sphinxcontrib/htmlhelp/__init__.py:268
 msgid "writing index file..."
