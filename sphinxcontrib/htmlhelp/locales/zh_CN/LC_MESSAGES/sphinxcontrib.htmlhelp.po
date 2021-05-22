@@ -6,6 +6,7 @@
 # 
 # Translators:
 # Yinian Chin <yinian1992@live.com>, 2019
+# Jian Dai <daijian1@qq.com>, 2020
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-02-15 00:45+0900\n"
 "PO-Revision-Date: 2019-02-14 15:47+0000\n"
-"Last-Translator: Yinian Chin <yinian1992@live.com>, 2019\n"
+"Last-Translator: Jian Dai <daijian1@qq.com>, 2020\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/sphinx-doc/teams/36659/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,15 +31,15 @@ msgstr "你现在可以打开 %(outdir)s 中的 .hlp 文件运行 HTML Help Work
 
 #: sphinxcontrib/htmlhelp/__init__.py:203
 msgid "copying stopword list"
-msgstr ""
+msgstr "导出停止词列表"
 
 #: sphinxcontrib/htmlhelp/__init__.py:218
 msgid "writing project file"
-msgstr ""
+msgstr "写入项目文件"
 
 #: sphinxcontrib/htmlhelp/__init__.py:246
 msgid "writing TOC file"
-msgstr ""
+msgstr "写入 TOC 文件"
 
 #: sphinxcontrib/htmlhelp/__init__.py:268
 msgid "writing index file..."

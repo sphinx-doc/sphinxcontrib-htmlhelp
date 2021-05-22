@@ -5,7 +5,8 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 # 
 # Translators:
-# Edward Villegas-Pulgarin, 2019
+# Edward Villegas-Pulgarin <cosmoscalibur@gmail.com>, 2019
+# Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2020
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-02-15 00:45+0900\n"
 "PO-Revision-Date: 2019-02-14 15:47+0000\n"
-"Last-Translator: Edward Villegas-Pulgarin, 2019\n"
+"Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2020\n"
 "Language-Team: Spanish (https://www.transifex.com/sphinx-doc/teams/36659/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,18 +28,19 @@ msgstr ""
 #, python-format
 msgid "You can now run HTML Help Workshop with the .htp file in %(outdir)s."
 msgstr ""
+"Ahora puede ejecutar HTML Help Workshop con el archivo .htp en %(outdir)s."
 
 #: sphinxcontrib/htmlhelp/__init__.py:203
 msgid "copying stopword list"
-msgstr ""
+msgstr "copiando la lista de palabras vacías"
 
 #: sphinxcontrib/htmlhelp/__init__.py:218
 msgid "writing project file"
-msgstr ""
+msgstr "escribir archivo de proyecto"
 
 #: sphinxcontrib/htmlhelp/__init__.py:246
 msgid "writing TOC file"
-msgstr ""
+msgstr "escribiendo archivo TOC"
 
 #: sphinxcontrib/htmlhelp/__init__.py:268
 msgid "writing index file..."
