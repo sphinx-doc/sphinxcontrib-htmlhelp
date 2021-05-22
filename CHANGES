@@ -1,4 +1,8 @@
-Release 2.0.0 (unreleased)
+Release 2.0.1 (unreleased)
+==========================
+
+
+Release 2.0.0 (2021-05-23)
 ==========================
 
 * Drop python-3.5 support
