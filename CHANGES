@@ -1,6 +1,7 @@
 Release 2.0.0 (unreleased)
 ==========================
 
+* Drop python-3.5 support
 * Remove deprecated method: ``HTMLHelpBuilder.open_file()``
 * #6685: htmlhelp builder should generate HTML4 docs instead of HTML5
 
