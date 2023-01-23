@@ -59,3 +59,6 @@ email = "georg@python.org"
 
 [tool.setuptools.dynamic]
 version.attr = "sphinxcontrib.htmlhelp.__version__"
+
+[tool.mypy]
+ignore_missing_imports = true
