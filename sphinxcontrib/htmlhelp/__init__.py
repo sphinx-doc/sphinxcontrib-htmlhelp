@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Set, Tuple, Type
 from docutils import nodes
 from docutils.nodes import Element, Node, document
 
+import sphinx
 from sphinx import addnodes
 from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
@@ -23,12 +24,16 @@ from sphinx.config import Config
 from sphinx.environment.adapters.indexentries import IndexEntries
 from sphinx.locale import get_translation
 from sphinx.util import logging
-from sphinx.util import progress_message
 from sphinx.util.fileutil import copy_asset_file
 from sphinx.util.nodes import NodeMatcher
 from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
 from sphinx.writers.html import HTMLTranslator
+
+if sphinx.version_info[:2] >= (6, 1):
+    from sphinx.util.display import progress_message
+else:
+    from sphinx.util import progress_message  # type: ignore[attr-defined,no-redef]
 
 __version__ = '2.0.1'
 __version_info__ = (2, 0, 1)
