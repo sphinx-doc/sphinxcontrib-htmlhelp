@@ -30,8 +30,8 @@ from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
 from sphinx.writers.html import HTMLTranslator
 
-from sphinxcontrib.htmlhelp.version import __version__
-
+__version__ = '2.0.1'
+__version_info__ = (2, 0, 1)
 
 logger = logging.getLogger(__name__)
 __ = get_translation(__name__, 'console')
