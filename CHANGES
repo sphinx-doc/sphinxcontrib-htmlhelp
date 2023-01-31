@@ -1,6 +1,8 @@
-Release 2.0.1 (unreleased)
+Release 2.0.1 (2023-01-31)
 ==========================
 
+* Drop support for Python 3.7 and lower
+* Fix deprecation warnings from Sphinx 6.1
 
 Release 2.0.0 (2021-05-23)
 ==========================
