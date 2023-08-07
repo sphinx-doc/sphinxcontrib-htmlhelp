@@ -1,6 +1,8 @@
 Release 2.0.2 (unreleased)
 ==========================
 
+* Drop support for Python 3.8
+* Raise minimum required Sphinx version to 5.0
 
 Release 2.0.1 (2023-01-31)
 ==========================
