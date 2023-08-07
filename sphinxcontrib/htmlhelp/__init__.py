@@ -8,11 +8,13 @@
     :license: BSD, see LICENSE for details.
 """
 
+from __future__ import annotations
+
 import html
 import os
 from os import path
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple, Type
+from typing import Any
 
 from docutils import nodes
 from docutils.nodes import Element, Node, document
@@ -99,7 +101,7 @@ def chm_htmlescape(s: str, quote: bool = True) -> str:
 class ToCTreeVisitor(nodes.NodeVisitor):
     def __init__(self, document: document) -> None:
         super().__init__(document)
-        self.body = []  # type: List[str]
+        self.body: list[str] = []
         self.depth = 0
 
     def append(self, text: str) -> None:
@@ -175,15 +177,15 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
             self.lcid, self.encoding = locale
 
     @property
-    def default_translator_class(self) -> "Type[nodes.NodeVisitor]":  # type: ignore
+    def default_translator_class(self) -> type[nodes.NodeVisitor]:
         # Use HTML4 writer always
         return HTMLTranslator
 
-    def prepare_writing(self, docnames: Set[str]) -> None:
+    def prepare_writing(self, docnames: set[str]) -> None:
         super().prepare_writing(docnames)
         self.globalcontext['html5_doctype'] = False
 
-    def update_page_context(self, pagename: str, templatename: str, ctx: Dict, event_arg: str) -> None:  # NOQA
+    def update_page_context(self, pagename: str, templatename: str, ctx: dict, event_arg: str) -> None:  # NOQA
         ctx['encoding'] = self.encoding
 
     def handle_finish(self) -> None:
@@ -200,7 +202,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
 
         super().write_doc(docname, doctree)
 
-    def render(self, name: str, context: Dict) -> str:
+    def render(self, name: str, context: dict) -> str:
         template = SphinxRenderer(template_dir)
         return template.render(name, context)
 
@@ -223,7 +225,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
     def build_project_file(self) -> None:
         """Create a project file (.hhp) on outdir."""
         # scan project files
-        project_files = []  # type: List[str]
+        project_files: list[str] = []
         for root, dirs, files in os.walk(self.outdir):
             dirs.sort()
             files.sort()
@@ -275,7 +277,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
             f.write('<UL>\n')
 
-            def write_index(title: str, refs: List[Tuple[str, str]], subitems: List[Tuple[str, List[Tuple[str, str]]]]) -> None:  # NOQA
+            def write_index(title: str, refs: list[tuple[str, str]], subitems: list[tuple[str, list[tuple[str, str]]]]) -> None:  # NOQA
                 def write_param(name: str, value: str) -> None:
                     item = '    <param name="%s" value="%s">\n' % (name, value)
                     f.write(item)
@@ -308,7 +310,7 @@ def default_htmlhelp_basename(config: Config) -> str:
     return make_filename_from_project(config.project) + 'doc'
 
 
-def setup(app: Sphinx) -> Dict[str, Any]:
+def setup(app: Sphinx) -> dict[str, Any]:
     app.setup_extension('sphinx.builders.html')
     app.add_builder(HTMLHelpBuilder)
     app.add_message_catalog(__name__, path.join(package_dir, 'locales'))
