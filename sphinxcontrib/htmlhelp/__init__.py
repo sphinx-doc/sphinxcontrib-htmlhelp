@@ -31,7 +31,6 @@ from sphinx.util.fileutil import copy_asset_file
 from sphinx.util.nodes import NodeMatcher
 from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
-from sphinx.writers.html import HTMLTranslator
 
 if sphinx.version_info[:2] >= (6, 1):
     from sphinx.util.display import progress_message
