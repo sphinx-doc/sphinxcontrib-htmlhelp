@@ -176,11 +176,6 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         if locale is not None:
             self.lcid, self.encoding = locale
 
-    @property
-    def default_translator_class(self) -> type[nodes.NodeVisitor]:
-        # Use HTML4 writer always
-        return HTMLTranslator
-
     def prepare_writing(self, docnames: set[str]) -> None:
         super().prepare_writing(docnames)
         self.globalcontext['html5_doctype'] = False
