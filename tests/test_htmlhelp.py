@@ -63,10 +63,8 @@ def test_chm(app):
 
     # check .hhk file
     outname = app.builder.config.htmlhelp_basename
-    hhk_path = str(app.outdir / outname + '.hhk')
-
-    with open(hhk_path, 'rb') as f:
-        data = f.read()
+    hhk_path = (app.outdir / outname).with_suffix('.hhk')
+    data = hhk_path.read_bytes()
     m = re.search(br'&#[xX][0-9a-fA-F]+;', data)
     assert m is None, 'Hex escaping exists in .hhk file: ' + str(m.group(0))
 
