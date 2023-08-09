@@ -1,6 +1,7 @@
 """Test the HTML Help builder and check output against XPath."""
 
 import re
+from pathlib import Path
 
 import pytest
 from html5lib import HTMLParser
@@ -55,7 +56,7 @@ def test_chm(app):
 
     # check .hhk file
     outname = app.builder.config.htmlhelp_basename
-    hhk_path = (app.outdir / outname).with_suffix('.hhk')
+    hhk_path = Path(app.outdir / outname).with_suffix('.hhk')
     data = hhk_path.read_bytes()
     m = re.search(br'&#[xX][0-9a-fA-F]+;', data)
     assert m is None, 'Hex escaping exists in .hhk file: ' + str(m.group(0))
