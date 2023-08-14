@@ -5,7 +5,6 @@ from __future__ import annotations
 import html
 import os
 from os import path
-from pathlib import Path
 from typing import Any
 
 from docutils import nodes
@@ -256,7 +255,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
             }
             f.write(self.render('project.hhc', context))
 
-    def build_hhx(self, outdir: Path, outname: str) -> None:
+    def build_hhx(self, outdir: str | os.PathLike[str], outname: str) -> None:
         logger.info(__('writing index file...'))
         index = IndexEntries(self.env).create_index(self)
         filename = path.join(outdir, outname + '.hhk')
