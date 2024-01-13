@@ -296,6 +296,7 @@ def default_htmlhelp_basename(config: Config) -> str:
 
 
 def setup(app: Sphinx) -> dict[str, Any]:
+    app.require_sphinx('5.0')
     app.setup_extension('sphinx.builders.html')
     app.add_builder(HTMLHelpBuilder)
     app.add_message_catalog(__name__, path.join(package_dir, 'locales'))
