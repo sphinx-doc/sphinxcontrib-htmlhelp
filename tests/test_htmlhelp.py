@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 import pytest
-from html5lib import HTMLParser
+from xml.etree.ElementTree import parse as xml_parse
 
 from sphinxcontrib.htmlhelp import chm_htmlescape, default_htmlhelp_basename
 from sphinx.config import Config
@@ -76,8 +76,8 @@ def test_htmlhelp_hhc(app):
 
     # .hhc file
     hhc = (app.outdir / 'pythondoc.hhc').read_text()
-    tree = HTMLParser(namespaceHTMLElements=False).parse(hhc)
-    items = tree.find('.//body/ul')
+    etree = xml_parse(app.outdir / 'pythondoc.hhc')
+    items = etree.find('.//body/ul')
     assert len(items) == 4
 
     # index

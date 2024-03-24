@@ -45,7 +45,6 @@ dynamic = ["version"]
 [project.optional-dependencies]
 test = [
     "pytest",
-    "html5lib",
 ]
 lint = [
     "flake8",
