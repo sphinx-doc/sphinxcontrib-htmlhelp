@@ -1,4 +1,4 @@
-Release 2.0.6 (unreleased)
+Release 2.0.6 (2024-07-20)
 ==========================
 
 * Fix tests for Sphinx 7.4 and later.
