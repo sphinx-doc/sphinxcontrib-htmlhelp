@@ -286,7 +286,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
                     f.write('</UL>')
             for (key, group) in index:
                 for title, (refs, subitems, key_) in group:
-                    write_index(title, refs, subitems)
+                    write_index(title, refs, subitems)  # type: ignore[arg-type]
             f.write('</UL>\n')
 
 
