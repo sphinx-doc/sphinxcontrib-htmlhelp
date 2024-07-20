@@ -28,8 +28,8 @@ if sphinx.version_info[:2] >= (6, 1):
 else:
     from sphinx.util import progress_message  # type: ignore[attr-defined,no-redef]
 
-__version__ = '2.0.5'
-__version_info__ = (2, 0, 5)
+__version__ = '2.0.6'
+__version_info__ = (2, 0, 6)
 
 logger = logging.getLogger(__name__)
 __ = get_translation(__name__, 'console')
