@@ -1,20 +1,28 @@
 """Test the HTML Help builder and check output against XPath."""
 
+from __future__ import annotations
+
 import re
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from html5lib import HTMLParser
+from sphinx.config import Config
 
 from sphinxcontrib.htmlhelp import chm_htmlescape, default_htmlhelp_basename
-from sphinx.config import Config
+
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
+    from sphinx.application import Sphinx
 
 
 @pytest.mark.sphinx('htmlhelp', testroot='basic')
-def test_build_htmlhelp(app, status, warning):
+def test_build_htmlhelp(app: Sphinx) -> None:
     app.build()
 
-    hhp = (app.outdir / 'pythondoc.hhp').read_text()
+    hhp = (app.outdir / 'pythondoc.hhp').read_text(encoding='utf-8')
     assert 'Compiled file=pythondoc.chm' in hhp
     assert 'Contents file=pythondoc.hhc' in hhp
     assert 'Default Window=pythondoc' in hhp
@@ -28,30 +36,30 @@ def test_build_htmlhelp(app, status, warning):
             '0x63520,220,0x10384e,[0,0,1024,768],,,,,,,0' in hhp)
 
     files = ['genindex.html', 'index.html', '_static\\alabaster.css', '_static\\basic.css',
-             '_static\\custom.css', '_static\\file.png', '_static\\minus.png',
-             '_static\\plus.png', '_static\\pygments.css']
-    assert '[FILES]\n%s' % '\n'.join(files) in hhp
+             '_static\\custom.css', '_static\\file.png', '_static\\github-banner.svg',
+             '_static\\minus.png', '_static\\plus.png', '_static\\pygments.css']
+    assert '[FILES]\n' + '\n'.join(files) in hhp
 
 
 @pytest.mark.sphinx('htmlhelp', testroot='basic')
-def test_default_htmlhelp_file_suffix(app, warning):
-    assert app.builder.out_suffix == '.html'
+def test_default_htmlhelp_file_suffix(app: Sphinx) -> None:
+    assert app.builder.out_suffix == '.html'  # type: ignore[attr-defined]
 
 
 @pytest.mark.sphinx('htmlhelp', testroot='basic',
                     confoverrides={'htmlhelp_file_suffix': '.htm'})
-def test_htmlhelp_file_suffix(app, warning):
-    assert app.builder.out_suffix == '.htm'
+def test_htmlhelp_file_suffix(app: Sphinx) -> None:
+    assert app.builder.out_suffix == '.htm'  # type: ignore[attr-defined]
 
 
-def test_default_htmlhelp_basename():
+def test_default_htmlhelp_basename() -> None:
     config = Config({'project': 'Sphinx Documentation'})
     config.init_values()
     assert default_htmlhelp_basename(config) == 'sphinxdoc'
 
 
 @pytest.mark.sphinx('htmlhelp', testroot='chm')
-def test_chm(app):
+def test_chm(app: Sphinx) -> None:
     app.build()
 
     # check .hhk file
@@ -63,10 +71,10 @@ def test_chm(app):
 
 
 @pytest.mark.sphinx('htmlhelp', testroot='hhc')
-def test_htmlhelp_hhc(app):
+def test_htmlhelp_hhc(app: Sphinx) -> None:
     app.build()
 
-    def assert_sitemap(node, name, filename):
+    def assert_sitemap(node: Element, name: str, filename: str) -> None:
         assert node.tag == 'object'
         assert len(node) == 2
         assert node[0].tag == 'param'
@@ -75,7 +83,7 @@ def test_htmlhelp_hhc(app):
         assert node[1].attrib == {'name': 'Local', 'value': filename}
 
     # .hhc file
-    hhc = (app.outdir / 'pythondoc.hhc').read_text()
+    hhc = (app.outdir / 'pythondoc.hhc').read_text(encoding='utf-8')
     tree = HTMLParser(namespaceHTMLElements=False).parse(hhc)
     items = tree.find('.//body/ul')
     assert len(items) == 4
@@ -108,9 +116,9 @@ def test_htmlhelp_hhc(app):
     assert "Sphinx&#39;s documentation" in hhc
 
 
-def test_chm_htmlescape():
+def test_chm_htmlescape() -> None:
     assert chm_htmlescape('Hello world') == 'Hello world'
-    assert chm_htmlescape(u'Unicode 文字') == u'Unicode 文字'
+    assert chm_htmlescape('Unicode 文字') == 'Unicode 文字'
     assert chm_htmlescape('&#x45') == '&amp;#x45'
 
     assert chm_htmlescape('<Hello> "world"') == '&lt;Hello&gt; &quot;world&quot;'
