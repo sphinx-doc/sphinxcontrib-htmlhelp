@@ -35,9 +35,12 @@ def test_build_htmlhelp(app: Sphinx) -> None:
             '"pythondoc.hhk","index.html","index.html",,,,,'
             '0x63520,220,0x10384e,[0,0,1024,768],,,,,,,0' in hhp)
 
-    files = ['genindex.html', 'index.html', '_static\\alabaster.css', '_static\\basic.css',
-             '_static\\custom.css', '_static\\file.png', '_static\\github-banner.svg',
-             '_static\\minus.png', '_static\\plus.png', '_static\\pygments.css']
+    files = (
+        'genindex.html', 'index.html',
+        '_static\\basic.css',
+        '_static\\file.png', '_static\\minus.png', '_static\\plus.png',
+        '_static\\pygments.css',
+    )
     assert '[FILES]\n' + '\n'.join(files) in hhp
 
 
