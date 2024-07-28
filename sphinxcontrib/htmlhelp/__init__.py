@@ -5,16 +5,13 @@ from __future__ import annotations
 import html
 import os
 from os import path
-from typing import Any
-
-from docutils import nodes
-from docutils.nodes import Element, Node, document
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 import sphinx
+from docutils import nodes
 from sphinx import addnodes
-from sphinx.application import Sphinx
 from sphinx.builders.html import StandaloneHTMLBuilder
-from sphinx.config import Config
 from sphinx.environment.adapters.indexentries import IndexEntries
 from sphinx.locale import get_translation
 from sphinx.util import logging
@@ -23,10 +20,15 @@ from sphinx.util.nodes import NodeMatcher
 from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
 
+if TYPE_CHECKING:
+    from docutils.nodes import Element, Node, document
+    from sphinx.application import Sphinx
+    from sphinx.config import Config
+
 if sphinx.version_info[:2] >= (6, 1):
     from sphinx.util.display import progress_message
 else:
-    from sphinx.util import progress_message  # type: ignore[attr-defined,no-redef]
+    from sphinx.util import progress_message  # type: ignore[no-redef]
 
 __version__ = '2.0.6'
 __version_info__ = (2, 0, 6)
@@ -126,8 +128,8 @@ class ToCTreeVisitor(nodes.NodeVisitor):
 
     def visit_reference(self, node: Element) -> None:
         title = chm_htmlescape(node.astext(), True)
-        self.append('    <param name="Name" value="%s">' % title)
-        self.append('    <param name="Local" value="%s">' % node['refuri'])
+        self.append(f'    <param name="Name" value="{title}">')
+        self.append(f'    <param name="Local" value="{node["refuri"]}">')
         self.append('</OBJECT>')
         raise nodes.SkipNode
 
@@ -170,7 +172,13 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         super().prepare_writing(docnames)
         self.globalcontext['html5_doctype'] = False
 
-    def update_page_context(self, pagename: str, templatename: str, ctx: dict, event_arg: str) -> None:  # NOQA
+    def update_page_context(
+        self,
+        pagename: str,
+        templatename: str,
+        ctx: dict[str, Any],
+        event_arg: str,
+    ) -> None:
         ctx['encoding'] = self.encoding
 
     def handle_finish(self) -> None:
@@ -180,14 +188,14 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         self.build_hhx(self.outdir, self.config.htmlhelp_basename)
 
     def write_doc(self, docname: str, doctree: document) -> None:
-        for node in doctree.traverse(nodes.reference):
+        for node in doctree.findall(nodes.reference):
             # add ``target=_blank`` attributes to external links
             if node.get('internal') is None and 'refuri' in node:
                 node['target'] = '_blank'
 
         super().write_doc(docname, doctree)
 
-    def render(self, name: str, context: dict) -> str:
+    def render(self, name: str, context: dict[str, Any]) -> str:
         template = SphinxRenderer(template_dir)
         return template.render(name, context)
 
@@ -220,40 +228,39 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
                     fn = relpath(path.join(root, fn), self.outdir)
                     project_files.append(fn.replace(os.sep, '\\'))
 
-        filename = path.join(self.outdir, self.config.htmlhelp_basename + '.hhp')
-        with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
-            context = {
-                'outname': self.config.htmlhelp_basename,
-                'title': self.config.html_title,
-                'version': self.config.version,
-                'project': self.config.project,
-                'lcid': self.lcid,
-                'master_doc': self.config.master_doc + self.out_suffix,
-                'files': project_files,
-            }
-            body = self.render('project.hhp', context)
-            f.write(body)
+        context = {
+            'outname': self.config.htmlhelp_basename,
+            'title': self.config.html_title,
+            'version': self.config.version,
+            'project': self.config.project,
+            'lcid': self.lcid,
+            'master_doc': self.config.master_doc + self.out_suffix,
+            'files': project_files,
+        }
+        body = self.render('project.hhp', context)
+        filename = Path(self.outdir, f'{self.config.htmlhelp_basename}.hhp')
+        filename.write_text(body, encoding=self.encoding, errors='xmlcharrefreplace')
 
     @progress_message(__('writing TOC file'))
     def build_toc_file(self) -> None:
         """Create a ToC file (.hhp) on outdir."""
-        filename = path.join(self.outdir, self.config.htmlhelp_basename + '.hhc')
-        with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
-            toctree = self.env.get_and_resolve_doctree(self.config.master_doc, self,
-                                                       prune_toctrees=False)
-            visitor = ToCTreeVisitor(toctree)
-            matcher = NodeMatcher(addnodes.compact_paragraph, toctree=True)
-            for node in toctree.traverse(matcher):  # type: addnodes.compact_paragraph
-                node.walkabout(visitor)
+        toctree = self.env.get_and_resolve_doctree(self.config.master_doc, self,
+                                                   prune_toctrees=False)
+        visitor = ToCTreeVisitor(toctree)
+        matcher = NodeMatcher(addnodes.compact_paragraph, toctree=True)
+        for node in toctree.findall(matcher):
+            node.walkabout(visitor)
 
-            context = {
-                'body': visitor.astext(),
-                'suffix': self.out_suffix,
-                'short_title': self.config.html_short_title,
-                'master_doc': self.config.master_doc,
-                'domain_indices': self.domain_indices,
-            }
-            f.write(self.render('project.hhc', context))
+        context = {
+            'body': visitor.astext(),
+            'suffix': self.out_suffix,
+            'short_title': self.config.html_short_title,
+            'master_doc': self.config.master_doc,
+            'domain_indices': self.domain_indices,
+        }
+        body = self.render('project.hhc', context)
+        filename = Path(self.outdir, f'{self.config.htmlhelp_basename}.hhc')
+        filename.write_text(body, encoding=self.encoding, errors='xmlcharrefreplace')
 
     def build_hhx(self, outdir: str | os.PathLike[str], outname: str) -> None:
         logger.info(__('writing index file...'))
@@ -262,9 +269,13 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
             f.write('<UL>\n')
 
-            def write_index(title: str, refs: list[tuple[str, str]], subitems: list[tuple[str, list[tuple[str, str]]]]) -> None:  # NOQA
+            def write_index(
+                title: str,
+                refs: list[tuple[str, str]],
+                subitems: list[tuple[str, list[tuple[str, str]]]],
+            ) -> None:
                 def write_param(name: str, value: str) -> None:
-                    item = '    <param name="%s" value="%s">\n' % (name, value)
+                    item = f'    <param name="{name}" value="{value}">\n'
                     f.write(item)
                 title = chm_htmlescape(title, True)
                 f.write('<LI> <OBJECT type="text/sitemap">\n')
@@ -284,9 +295,9 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
                     for subitem in subitems:
                         write_index(subitem[0], subitem[1], [])
                     f.write('</UL>')
-            for (key, group) in index:
-                for title, (refs, subitems, key_) in group:
-                    write_index(title, refs, subitems)  # type: ignore[arg-type]
+            for (_group_key, group) in index:
+                for title, (refs, subitems, _category_key) in group:
+                    write_index(title, refs, subitems)
             f.write('</UL>\n')
 
 
