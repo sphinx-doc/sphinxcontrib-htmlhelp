@@ -1,3 +1,11 @@
+Release 2.1.0 (2024-07-28)
+==========================
+
+* Adopt Ruff
+* Tighten MyPy settings
+* Update GitHub actions versions
+* Escape HTML entities
+
 Release 2.0.6 (2024-07-20)
 ==========================
 
