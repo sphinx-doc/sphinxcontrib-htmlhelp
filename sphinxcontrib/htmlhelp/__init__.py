@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import html
 import os
+import re
+from html.entities import codepoint2name
 from os import path
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -21,7 +23,7 @@ from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
 
 if TYPE_CHECKING:
-    from docutils.nodes import Element, Node, document
+    from docutils.nodes import Element, Node
     from sphinx.application import Sphinx
     from sphinx.config import Config
 
@@ -91,7 +93,7 @@ def chm_htmlescape(s: str, quote: bool = True) -> str:
 
 
 class ToCTreeVisitor(nodes.NodeVisitor):
-    def __init__(self, document: document) -> None:
+    def __init__(self, document: nodes.document) -> None:
         super().__init__(document)
         self.body: list[str] = []
         self.depth = 0
@@ -181,13 +183,25 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
     ) -> None:
         ctx['encoding'] = self.encoding
 
+        # escape the `body` part to 7-bit ASCII
+        body = ctx.get("body")
+        if body is not None:
+            ctx["body"] = re.sub(r"[^\x00-\x7F]", self._escape, body)
+
+    @staticmethod
+    def _escape(match: re.Match[str]) -> str:
+        codepoint = ord(match.group(0))
+        if codepoint in codepoint2name:
+            return f"&{codepoint2name[codepoint]};"
+        return f"&#{codepoint};"
+
     def handle_finish(self) -> None:
         self.copy_stopword_list()
         self.build_project_file()
         self.build_toc_file()
         self.build_hhx(self.outdir, self.config.htmlhelp_basename)
 
-    def write_doc(self, docname: str, doctree: document) -> None:
+    def write_doc(self, docname: str, doctree: nodes.document) -> None:
         for node in doctree.findall(nodes.reference):
             # add ``target=_blank`` attributes to external links
             if node.get('internal') is None and 'refuri' in node:
@@ -265,7 +279,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
     def build_hhx(self, outdir: str | os.PathLike[str], outname: str) -> None:
         logger.info(__('writing index file...'))
         index = IndexEntries(self.env).create_index(self)
-        filename = path.join(outdir, outname + '.hhk')
+        filename = Path(outdir, outname + '.hhk')
         with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
             f.write('<UL>\n')
 
@@ -299,6 +313,9 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
                 for title, (refs, subitems, _category_key) in group:
                     write_index(title, refs, subitems)
             f.write('</UL>\n')
+        # Fixup keywords (HTML escapes in keywords file)
+        content = filename.read_bytes().replace(b'&#x27;', b'&#39;')
+        filename.write_bytes(content)
 
 
 def default_htmlhelp_basename(config: Config) -> str:
