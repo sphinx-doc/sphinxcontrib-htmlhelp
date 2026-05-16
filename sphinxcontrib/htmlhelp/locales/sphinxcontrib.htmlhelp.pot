@@ -20,7 +20,7 @@ msgstr ""
 
 #: sphinxcontrib/htmlhelp/__init__.py:147
 #, python-format
-msgid "You can now run HTML Help Workshop with the .htp file in %(outdir)s."
+msgid "You can now run HTML Help Workshop with the .hhp file in %(outdir)s."
 msgstr ""
 
 #: sphinxcontrib/htmlhelp/__init__.py:203
