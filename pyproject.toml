@@ -81,8 +81,11 @@ packages = [
 ]
 exclude = [
     "tests/roots",
-    ".tox",
 ]
+
+[[tool.mypy.overrides]]
+module = "sphinx.*"
+follow_imports = "skip"
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
