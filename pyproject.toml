@@ -51,6 +51,7 @@ lint = [
     "ruff==0.5.5",
     "mypy",
     "types-docutils",
+    "types-html5lib",
 ]
 standalone = [
     "Sphinx>=5",
@@ -73,7 +74,7 @@ include = [
 ]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 packages = [
     "sphinxcontrib",
     "tests",
@@ -81,6 +82,10 @@ packages = [
 exclude = [
     "tests/roots",
 ]
+
+[[tool.mypy.overrides]]
+module = "sphinx.*"
+follow_imports = "skip"
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
