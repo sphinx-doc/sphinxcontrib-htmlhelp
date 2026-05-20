@@ -81,6 +81,7 @@ packages = [
 ]
 exclude = [
     "tests/roots",
+    ".tox",
 ]
 check_untyped_defs = true
 disallow_any_generics = true
