@@ -8,7 +8,7 @@ import re
 from html.entities import codepoint2name
 from os import path
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union
 
 import sphinx
 from docutils import nodes
@@ -23,6 +23,8 @@ from sphinx.util.osutil import make_filename_from_project, relpath
 from sphinx.util.template import SphinxRenderer
 
 if TYPE_CHECKING:
+    from collections.abc import Set
+
     from docutils.nodes import Element, Node
     from sphinx.application import Sphinx
     from sphinx.config import Config
@@ -170,7 +172,7 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         if locale is not None:
             self.lcid, self.encoding = locale
 
-    def prepare_writing(self, docnames: set[str]) -> None:
+    def prepare_writing(self, docnames: Set[str]) -> None:
         super().prepare_writing(docnames)
         self.globalcontext['html5_doctype'] = False
 
@@ -283,10 +285,12 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
         with open(filename, 'w', encoding=self.encoding, errors='xmlcharrefreplace') as f:
             f.write('<UL>\n')
 
+            IndexEntryTargets = list[tuple[Optional[str], Union[str, Literal[False]]]]
+
             def write_index(
                 title: str,
-                refs: list[tuple[str, str]],
-                subitems: list[tuple[str, list[tuple[str, str]]]],
+                refs: IndexEntryTargets,
+                subitems: list[tuple[str, IndexEntryTargets]],
             ) -> None:
                 def write_param(name: str, value: str) -> None:
                     item = f'    <param name="{name}" value="{value}">\n'
@@ -297,12 +301,16 @@ class HTMLHelpBuilder(StandaloneHTMLBuilder):
                 if len(refs) == 0:
                     write_param('See Also', title)
                 elif len(refs) == 1:
-                    write_param('Local', refs[0][1])
+                    target = refs[0][1]
+                    if target is not False:
+                        write_param('Local', target)
                 else:
                     for i, ref in enumerate(refs):
                         # XXX: better title?
-                        write_param('Name', '[%d] %s' % (i, ref[1]))
-                        write_param('Local', ref[1])
+                        target = ref[1]
+                        if target is not False:
+                            write_param('Name', '[%d] %s' % (i, target))
+                            write_param('Local', target)
                 f.write('</OBJECT>\n')
                 if subitems:
                     f.write('<UL> ')
