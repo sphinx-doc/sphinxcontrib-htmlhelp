@@ -51,6 +51,7 @@ lint = [
     "ruff==0.5.5",
     "mypy",
     "types-docutils",
+    "types-html5lib",
 ]
 standalone = [
     "Sphinx>=5",
@@ -73,7 +74,8 @@ include = [
 ]
 
 [tool.mypy]
-python_version = "3.9"
+# mypy 1.16+ requires >=3.10; Sphinx main uses type statements (3.12+)
+python_version = "3.12"
 packages = [
     "sphinxcontrib",
     "tests",
