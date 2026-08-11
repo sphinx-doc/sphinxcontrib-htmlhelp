@@ -1,3 +1,9 @@
+Release 2.2.0 (unreleased)
+==========================
+
+* Fix the ``htmlhelp`` builder epilog to name the correct ``.hhp`` project
+  file extension (was ``.htp``)
+
 Release 2.1.0 (2024-07-28)
 ==========================
 
