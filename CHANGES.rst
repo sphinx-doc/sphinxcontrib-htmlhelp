@@ -1,6 +1,7 @@
 Release 2.1.0 (2024-07-28)
 ==========================
 
+* Fix ``.htp`` -> ``.hhp`` typo in the epilog message
 * Adopt Ruff
 * Tighten MyPy settings
 * Update GitHub actions versions
